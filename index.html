@@ -1,90 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IP Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    .hidden {
-      display: none;
-    }
-    input {
-      padding: 10px;
-      margin: 10px;
-      width: 200px;
-    }
-    button {
-      padding: 10px;
-      cursor: pointer;
-    }
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 80%;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .admin-panel {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-  <h1>IP Tracker</h1>
-  <div>
-    <input type="text" id="admin-code" placeholder="Enter admin code">
-    <button onclick="checkCode()">Submit</button>
-  </div>
+    <h1>IP Logger</h1>
+    <p>Your IP address: <span id="ip">Loading...</span></p>
 
-  <div id="admin-panel" class="hidden">
-    <h2>Connected Users</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>IP Address</th>
-        </tr>
-      </thead>
-      <tbody id="ip-list"></tbody>
-    </table>
-  </div>
+    <label for="admin-code">Enter Admin Code:</label>
+    <input type="text" id="admin-code" placeholder="Enter code to access admin panel">
+    <button onclick="checkAdminCode()">Submit</button>
 
-  <script>
-    // Validate the admin code
-    function checkCode() {
-      const code = document.getElementById('admin-code').value;
-      if (code === '342') {
-        document.getElementById('admin-panel').classList.remove('hidden');
-        fetchVisitorIPs();
-      } else {
-        alert('Incorrect code!');
-      }
-    }
+    <div class="admin-panel" id="admin-panel">
+        <h2>Admin Panel</h2>
+        <p><strong>Logged IP:</strong> <span id="admin-ip">Not Logged</span></p>
+    </div>
 
-    // Fetch visitor IPs from the backend
-    async function fetchVisitorIPs() {
-      try {
-        const response = await fetch('http://localhost:3000/visitors');
-        const ips = await response.json();
+    <script>
+        // Fetch the public IP address using ipify API
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;
+                document.getElementById('ip').textContent = ip;  // Display IP on the page
+                document.getElementById('admin-ip').textContent = ip;  // Display IP in admin panel
+            })
+            .catch(error => {
+                console.error('Error fetching IP:', error);
+                document.getElementById('ip').textContent = 'Unable to fetch IP';
+            });
 
-        const ipList = document.getElementById('ip-list');
-        ipList.innerHTML = '';
-        ips.forEach(ip => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td>${ip}</td>`;
-          ipList.appendChild(row);
-        });
-      } catch (error) {
-        console.error('Error fetching IPs:', error);
-      }
-    }
-  </script>
+        // Check if the admin code is correct and show the admin panel
+        function checkAdminCode() {
+            const code = document.getElementById('admin-code').value;
+            if (code === '231') {
+                document.getElementById('admin-panel').style.display = 'block';
+            } else {
+                alert('Incorrect admin code!');
+            }
+        }
+    </script>
 </body>
 </html>
-

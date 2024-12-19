@@ -44,12 +44,11 @@
   </div>
 
   <div id="admin-panel" class="hidden">
-    <h2>Visitor IPs</h2>
+    <h2>Connected Users</h2>
     <table>
       <thead>
         <tr>
           <th>IP Address</th>
-          <th>Name</th>
         </tr>
       </thead>
       <tbody id="ip-list"></tbody>
@@ -57,32 +56,35 @@
   </div>
 
   <script>
+    // Validate the admin code
     function checkCode() {
       const code = document.getElementById('admin-code').value;
       if (code === '342') {
         document.getElementById('admin-panel').classList.remove('hidden');
-        fetchVisitorData();
+        fetchVisitorIPs();
       } else {
         alert('Incorrect code!');
       }
     }
 
-    async function fetchVisitorData() {
+    // Fetch visitor IPs from the backend
+    async function fetchVisitorIPs() {
       try {
-        const res = await fetch('http://localhost:3000/visitors');
-        const visitors = await res.json();
+        const response = await fetch('http://localhost:3000/visitors');
+        const ips = await response.json();
 
         const ipList = document.getElementById('ip-list');
         ipList.innerHTML = '';
-        visitors.forEach(visitor => {
+        ips.forEach(ip => {
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${visitor.ip}</td><td>${visitor.name}</td>`;
+          row.innerHTML = `<td>${ip}</td>`;
           ipList.appendChild(row);
         });
       } catch (error) {
-        console.error('Error fetching visitor data:', error);
+        console.error('Error fetching IPs:', error);
       }
     }
   </script>
 </body>
 </html>
+

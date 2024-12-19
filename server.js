@@ -5,23 +5,21 @@ const app = express();
 app.use(cors());
 
 // Store visitor IPs in memory
-const visitorData = [];
+const visitorIPs = new Set();
 
-// Middleware to capture IP
+// Middleware to capture and log visitor IP
 app.use((req, res, next) => {
   const visitorIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  if (!visitorData.some(data => data.ip === visitorIP)) {
-    visitorData.push({ ip: visitorIP, name: `Visitor ${visitorData.length + 1}` });
-  }
+  visitorIPs.add(visitorIP);
   next();
 });
 
-// Route to get visitor IPs
+// Route to fetch visitor IPs
 app.get('/visitors', (req, res) => {
-  res.json(visitorData);
+  res.json(Array.from(visitorIPs));
 });
 
-// Serve the frontend (static files)
+// Serve static files (for frontend)
 app.use(express.static('public'));
 
 // Start the server

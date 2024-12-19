@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IP Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .hidden {
+      display: none;
+    }
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+    }
+    button {
+      padding: 10px;
+      cursor: pointer;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 80%;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>IP Tracker</h1>
+  <div>
+    <input type="text" id="admin-code" placeholder="Enter admin code">
+    <button onclick="checkCode()">Submit</button>
+  </div>
+
+  <div id="admin-panel" class="hidden">
+    <h2>Visitor IPs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>IP Address</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody id="ip-list"></tbody>
+    </table>
+  </div>
+
+  <script>
+    function checkCode() {
+      const code = document.getElementById('admin-code').value;
+      if (code === '342') {
+        document.getElementById('admin-panel').classList.remove('hidden');
+        fetchVisitorData();
+      } else {
+        alert('Incorrect code!');
+      }
+    }
+
+    async function fetchVisitorData() {
+      try {
+        const res = await fetch('http://localhost:3000/visitors');
+        const visitors = await res.json();
+
+        const ipList = document.getElementById('ip-list');
+        ipList.innerHTML = '';
+        visitors.forEach(visitor => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${visitor.ip}</td><td>${visitor.name}</td>`;
+          ipList.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching visitor data:', error);
+      }
+    }
+  </script>
+</body>
+</html>
